@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title> 天使里拉琴16弦 </title>
+
+<script type="module"
+  src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js">
+</script>
+
+<style>
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+}
+
+model-viewer {
+  width: 100vw;
+  height: 100vh;
+  background: #f5f5f5;
+}
+
+/* ===== Floating Panel ===== */
+.panel {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  width: 260px;
+  max-height: 90vh;
+  overflow-y: auto;
+
+  background: rgba(255,255,255,0.95);
+  padding: 16px;
+  border-radius: 14px;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.18);
+
+  z-index: 10;
+  transition: all 0.25s ease;
+}
+
+/* 收合狀態 */
+.panel.collapsed {
+  width: 52px;
+  height: 52px;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* Toggle Button */
+.toggle-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+
+  width: 36px;
+  height: 36px;
+
+  border: none;
+  border-radius: 10px;
+  background: #222;
+  color: white;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+/* 收合時隱藏內容 */     
+.panel.collapsed .panel-content {
+  display: none;
+}
+
+.panel button.action {
+  display: block;
+  width: 100%;
+  margin: 6px 0;
+  padding: 8px;
+  cursor: pointer;
+}
+
+.panel label {
+  display: block;
+  margin-top: 12px;
+  font-size: 14px;
+}
+
+.panel input[type="range"] {
+  width: 100%;
+}
+</style>
+</head>
+<body>
+
+<div class="panel collapsed" id="controlPanel">
+
+  <button class="toggle-btn" onclick="togglePanel()">?</button>
+
+  <div class="panel-content">
+
+    <strong>Wood Texture</strong>
+    <button class="action" onclick="setWood('wood-light.jpg')">Light Wood</button>
+    <button class="action" onclick="setWood('wood-dark.jpg')">Dark Wood</button>
+    <button class="action" onclick="setWood('wood-red.jpg')">Red Wood</button>
+
+    <strong>Tint</strong>
+    <button class="action" onclick="setTint(1,1,1)">Normal</button>
+    <button class="action" onclick="setTint(1,0.92,0.85)">Warm</button>
+    <button class="action" onclick="setTint(0.8,0.8,0.8)">Gray</button>
+
+    <label>Brightness <span id="brightnessValue">0.80</span></label>
+    <input type="range" id="brightnessSlider" min="0.3" max="2" step="0.05" value="0.8">
+
+    <label>Metallic <span id="metallicValue">0.00</span></label>
+    <input type="range" id="metallicSlider" min="0" max="1" step="0.01" value="0">
+
+    <label>Roughness <span id="roughnessValue">0.25</span></label>
+    <input type="range" id="roughnessSlider" min="0" max="1" step="0.01" value="0.25">
+
+  </div>
+</div>
+
+<model-viewer
+  id="mv"
+  src="Violin-v1.glb"
+  poster="poster.webp"
+  camera-controls
+  auto-rotate
+  rotation-per-second="15deg"
+  environment-image="https://modelviewer.dev/shared-assets/environments/spruit_sunrise_1k_HDR.hdr"
+  tone-mapping="neutral"
+  exposure="0.8"
+  shadow-intensity="1"
+  shadow-softness="0.6"
+  camera-orbit="auto auto auto"
+  field-of-view="auto">
+  Joesun Studio
+</model-viewer>
+
+<model-viewer id="mv" src="violin.glb" auto-rotate camera-controls></model-viewer>
+
+<script>
+const mv = document.querySelector('#mv');
+
+mv.addEventListener('load', () => {
+  mv.model.materials.forEach((mat) => {
+    mat.pbrMetallicRoughness.setBaseColorFactor([1, 1, 1, 1]);
+  });
+});
+</script>
+
+<script type="module">
+const mv = document.querySelector("#mv");
+
+window.togglePanel = function() {
+  document.querySelector("#controlPanel").classList.toggle("collapsed");
+};
+
+window.setWood = async function(textureUrl) {
+  const tex = await mv.createTexture(textureUrl);
+  mv.model.materials.forEach(mat => {
+    if (mat.pbrMetallicRoughness.baseColorTexture) {
+      mat.pbrMetallicRoughness.baseColorTexture.setTexture(tex);
+    }
+  });
+};
+
+window.setTint = function(r,g,b) {
+  mv.model.materials.forEach(mat => {
+    mat.pbrMetallicRoughness.setBaseColorFactor([r,g,b,1]);
+  });
+};
+
+function updateAllMaterials(callback){
+  mv.model.materials.forEach(mat => callback(mat.pbrMetallicRoughness));
+}
+
+brightnessSlider.addEventListener("input", e => {
+  mv.exposure = e.target.value;
+  brightnessValue.textContent = Number(e.target.value).toFixed(2);
+});
+
+metallicSlider.addEventListener("input", e => {
+  const val = Number(e.target.value);
+  updateAllMaterials(pbr => pbr.setMetallicFactor(val));
+  metallicValue.textContent = val.toFixed(2);
+});
+
+roughnessSlider.addEventListener("input", e => {
+  const val = Number(e.target.value);
+  updateAllMaterials(pbr => pbr.setRoughnessFactor(val));
+  roughnessValue.textContent = val.toFixed(2);
+});
+</script>
+
+</body>
+</html>
