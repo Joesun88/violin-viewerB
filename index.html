@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title> 天使里拉琴16弦 </title>
+<title>天使里拉琴16弦</title>
 
 <script type="module"
   src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js">
@@ -24,7 +24,7 @@ model-viewer {
   background: #f5f5f5;
 }
 
-/* ===== Floating Panel ===== */
+/* ===== Floating Control Panel ===== */
 .panel {
   position: fixed;
   top: 20px;
@@ -38,11 +38,10 @@ model-viewer {
   border-radius: 14px;
   box-shadow: 0 4px 18px rgba(0,0,0,0.18);
 
-  z-index: 10;
+  z-index: 30;
   transition: all 0.25s ease;
 }
 
-/* 收合狀態 */
 .panel.collapsed {
   width: 52px;
   height: 52px;
@@ -50,7 +49,6 @@ model-viewer {
   overflow: hidden;
 }
 
-/* Toggle Button */
 .toggle-btn {
   position: absolute;
   top: 8px;
@@ -67,7 +65,6 @@ model-viewer {
   font-size: 18px;
 }
 
-/* 收合時隱藏內容 */     
 .panel.collapsed .panel-content {
   display: none;
 }
@@ -89,13 +86,42 @@ model-viewer {
 .panel input[type="range"] {
   width: 100%;
 }
+
+/* ===== Custom AR Button ===== */
+#custom-ar-btn{
+  position:absolute;
+  bottom:16px;
+  right:16px;
+
+  padding:10px 16px;
+  border:none;
+  border-radius:12px;
+
+  background:rgba(30,30,30,0.78);
+  color:white;
+
+  font-size:14px;
+  font-weight:600;
+
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+
+  box-shadow:0 4px 12px rgba(0,0,0,0.25);
+
+  cursor:pointer;
+  transition:all .2s ease;
+}
+
+#custom-ar-btn:hover{
+  background:rgba(60,60,60,0.9);
+  transform:scale(1.05);
+}
 </style>
 </head>
 <body>
 
 <div class="panel collapsed" id="controlPanel">
-
-  <button class="toggle-btn" onclick="togglePanel()">?</button>
+  <button class="toggle-btn" onclick="togglePanel()">☰</button>
 
   <div class="panel-content">
 
@@ -125,9 +151,16 @@ model-viewer {
   id="mv"
   src="Violin-v1.glb"
   poster="poster.webp"
+
+  ar
+  ar-modes="webxr scene-viewer quick-look"
+  ar-scale="fixed"
+  ar-placement="floor"
+
   camera-controls
   auto-rotate
   rotation-per-second="15deg"
+
   environment-image="https://modelviewer.dev/shared-assets/environments/spruit_sunrise_1k_HDR.hdr"
   tone-mapping="neutral"
   exposure="0.8"
@@ -135,47 +168,53 @@ model-viewer {
   shadow-softness="0.6"
   camera-orbit="auto auto auto"
   field-of-view="auto">
+
+  <button slot="ar-button" id="custom-ar-btn">
+    📱 AR 實境預覽
+  </button>
+
   Joesun Studio
 </model-viewer>
 
-<model-viewer id="mv" src="violin.glb" auto-rotate camera-controls></model-viewer>
-
 <script>
-const mv = document.querySelector('#mv');
-
-mv.addEventListener('load', () => {
-  mv.model.materials.forEach((mat) => {
-    mat.pbrMetallicRoughness.setBaseColorFactor([1, 1, 1, 1]);
-  });
-});
-</script>
-
-<script type="module">
 const mv = document.querySelector("#mv");
 
-window.togglePanel = function() {
-  document.querySelector("#controlPanel").classList.toggle("collapsed");
-};
+/* 初始材質設定 */
+mv.addEventListener("load", () => {
+  mv.model.materials.forEach(mat => {
+    mat.pbrMetallicRoughness.setBaseColorFactor([1,1,1,1]);
+  });
+});
 
-window.setWood = async function(textureUrl) {
+/* Panel Toggle */
+function togglePanel() {
+  document.querySelector("#controlPanel").classList.toggle("collapsed");
+}
+
+/* Texture Switch */
+async function setWood(textureUrl) {
   const tex = await mv.createTexture(textureUrl);
+
   mv.model.materials.forEach(mat => {
     if (mat.pbrMetallicRoughness.baseColorTexture) {
       mat.pbrMetallicRoughness.baseColorTexture.setTexture(tex);
     }
   });
-};
+}
 
-window.setTint = function(r,g,b) {
+/* Tint */
+function setTint(r,g,b) {
   mv.model.materials.forEach(mat => {
     mat.pbrMetallicRoughness.setBaseColorFactor([r,g,b,1]);
   });
-};
+}
 
+/* Utility */
 function updateAllMaterials(callback){
   mv.model.materials.forEach(mat => callback(mat.pbrMetallicRoughness));
 }
 
+/* Sliders */
 brightnessSlider.addEventListener("input", e => {
   mv.exposure = e.target.value;
   brightnessValue.textContent = Number(e.target.value).toFixed(2);
