@@ -87,9 +87,14 @@ model-viewer {
   width: 100%;
 }
 
-  .page-title{
-  font-size: 60px;
-  font-weight:bold;
+ .company-info{
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+
+  font-size: 24px;
+  font-weight: bold;
+  color: #222;
 }
   
 /* ===== Custom AR Button ===== */
@@ -177,9 +182,10 @@ model-viewer {
   <button slot="ar-button" id="custom-ar-btn">
     📱 AR 實境預覽
   </button>
-
-  Joesun Studio<br>
-  0937-230075
+<div class="company-info">
+  Joesun<br>
+  TEL: 0937-230075
+</div>
 </model-viewer>
 
 <script>
