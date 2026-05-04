@@ -97,7 +97,18 @@ model-viewer {
   background:#999;
   color:green;
 }
+
+.company-logo{
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
   
+  width: 12vw;
+  max-width: 160px;
+  min-width: 80px;
+  height: auto;
+}
+
 /* ===== Custom AR Button ===== */
 #custom-ar-btn{
   position:absolute;
@@ -131,6 +142,7 @@ model-viewer {
 </head>
 <body>
 
+<img src="logo.png" class="company-logo">
 <div class="panel collapsed" id="controlPanel">
   <button class="toggle-btn" onclick="togglePanel()">☰</button>
 
