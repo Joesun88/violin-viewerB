@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>天使里拉琴16弦</title>
+<title>Low-frequency magnetic</title>
 
 <script type="module"
   src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js">
@@ -212,7 +212,7 @@ const mv = document.querySelector("#mv");
 /* 初始材質設定 */
 mv.addEventListener("load", () => {
   mv.model.materials.forEach(mat => {
-    mat.pbrMetallicRoughness.setBaseColorFactor([1,1,1,0.5]);
+    mat.pbrMetallicRoughness.setBaseColorFactor([1,1,1,0.3]);
   });
 });
 
