@@ -263,6 +263,76 @@ roughnessSlider.addEventListener("input", e => {
   updateAllMaterials(pbr => pbr.setRoughnessFactor(val));
   roughnessValue.textContent = val.toFixed(2);
 });
+
+/* more */
+window.setAppleSilver = function(){
+
+  mv.exposure = 0.82;
+
+  mv.model.materials.forEach(mat => {
+
+    const pbr = mat.pbrMetallicRoughness;
+
+    // Apple Silver
+    pbr.setBaseColorFactor([0.82,0.82,0.84,1]);
+
+    // 金屬感
+    pbr.setMetallicFactor(0.92);
+
+    // 柔和鋁金屬
+    pbr.setRoughnessFactor(0.22);
+
+  });
+
+};
+
+window.setAppleSpaceGray = function(){
+
+  mv.exposure = 0.72;
+
+  mv.model.materials.forEach(mat => {
+
+    const pbr = mat.pbrMetallicRoughness;
+
+    pbr.setBaseColorFactor([0.32,0.33,0.36,1]);
+    pbr.setMetallicFactor(0.88);
+    pbr.setRoughnessFactor(0.28);
+
+  });
+
+};
+
+window.setAppleBlack = function(){
+
+  mv.exposure = 0.68;
+
+  mv.model.materials.forEach(mat => {
+
+    const pbr = mat.pbrMetallicRoughness;
+
+    pbr.setBaseColorFactor([0.12,0.12,0.13,1]);
+    pbr.setMetallicFactor(0.95);
+    pbr.setRoughnessFactor(0.18);
+
+  });
+
+};
+
+window.setAppleGold = function(){
+
+  mv.exposure = 0.86;
+
+  mv.model.materials.forEach(mat => {
+
+    const pbr = mat.pbrMetallicRoughness;
+
+    pbr.setBaseColorFactor([0.83,0.72,0.52,1]);
+    pbr.setMetallicFactor(0.88);
+    pbr.setRoughnessFactor(0.24);
+
+  });
+
+};
 </script>
 
 </body>
