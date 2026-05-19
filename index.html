@@ -1,56 +1,90 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="en">
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Low-frequency magnetic</title>
+<title>Violin Configurator</title>
 
 <script type="module"
-  src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js">
+src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js">
 </script>
 
 <style>
+
 html, body {
   margin: 0;
   height: 100%;
   overflow: hidden;
   font-family: Arial, sans-serif;
+
+  background: linear-gradient(
+    to bottom,
+    #f7f7f7,
+    #e7e7e7
+  );
 }
 
 model-viewer {
   width: 100vw;
   height: 100vh;
-  background: #f5f5f5;
+  display: block;
+  background: transparent;
 }
 
-/* ===== Floating Control Panel ===== */
+/* ===== Floating Panel ===== */
+
 .panel {
   position: fixed;
-  top: 20px;
-  left: 20px;
+  top: 18px;
+  left: 18px;
+
   width: 260px;
   max-height: 90vh;
+
   overflow-y: auto;
 
-  background: rgba(255,255,255,0.95);
-  padding: 16px;
-  border-radius: 14px;
-  box-shadow: 0 4px 18px rgba(0,0,0,0.18);
+  background: rgba(255,255,255,0.72);
 
-  z-index: 30;
+  backdrop-filter: blur(18px);
+
+  border-radius: 18px;
+
+  box-shadow:
+    0 8px 28px rgba(0,0,0,0.12);
+
+  z-index: 100;
+
   transition: all 0.25s ease;
+
+  padding: 16px;
 }
 
+/* collapsed */
+
 .panel.collapsed {
+
   width: 52px;
   height: 52px;
+
   padding: 0;
+
   overflow: hidden;
 }
 
+/* hide content */
+
+.panel.collapsed .panel-content {
+  display: none;
+}
+
+/* toggle */
+
 .toggle-btn {
+
   position: absolute;
+
   top: 8px;
   right: 8px;
 
@@ -58,235 +92,331 @@ model-viewer {
   height: 36px;
 
   border: none;
-  border-radius: 10px;
-  background: #222;
-  color: white;
-  cursor: pointer;
-  font-size: 16px;
-}
 
-.panel.collapsed .panel-content {
-  display: none;
+  border-radius: 12px;
+
+  background: rgba(0,0,0,0.82);
+
+  color: white;
+
+  cursor: pointer;
+
+  font-size: 18px;
 }
 
 .panel button.action {
+
   display: block;
+
   width: 100%;
+
   margin: 6px 0;
-  padding: 8px;
+
+  padding: 9px;
+
+  border: none;
+
+  border-radius: 10px;
+
+  background: #f1f1f1;
+
   cursor: pointer;
+
+  transition: 0.15s;
+}
+
+.panel button.action:hover {
+  background: #dddddd;
 }
 
 .panel label {
+
   display: block;
+
   margin-top: 12px;
-  font-size: 12px;
+
+  font-size: 14px;
 }
 
 .panel input[type="range"] {
   width: 100%;
 }
 
- .company-info{
-  position: fixed;
-  bottom: 20px;
-  left: 28px;
+.section-title {
 
-  font-size: 12px;
+  margin-top: 14px;
+  margin-bottom: 6px;
+
   font-weight: bold;
-  background:#999;
-  color:green;
+
+  font-size: 14px;
+}
+
+/* ===== company info ===== */
+
+.company-info {
+
+  position: fixed;
+
+  right: 24px;
+  bottom: 24px;
+
+  z-index: 50;
+
+  padding: 14px 18px;
+
+  border-radius: 18px;
+
+  background: rgba(255,255,255,0.62);
+
+  backdrop-filter: blur(16px);
+
+  box-shadow:
+    0 6px 22px rgba(0,0,0,0.10);
+
+  color: #222;
+
+  line-height: 1.45;
+
+  font-size: 13px;
+
+  max-width: 260px;
+
   text-align: center;
 }
 
-.company-logo{
-  position: fixed;
-  bottom: 40px;
-  left: 16px;
-  
-  width: 12vw;
-  max-width: 140px;
-  min-width: 80px;
-  height: auto;
+.company-info .title {
+
+  font-size: 16px;
+
+  font-weight: bold;
+
+  margin-bottom: 4px;
 }
 
-/* ===== Custom AR Button ===== */
-#custom-ar-btn{
-  position:absolute;
-  bottom:16px;
-  right:16px;
+.company-info .sub {
 
-  padding:10px 16px;
-  border:none;
-  border-radius:12px;
+  color: #666;
 
-  background:rgba(30,30,30,0.78);
-  color:white;
-
-  font-size:14px;
-  font-weight:600;
-
-  backdrop-filter:blur(8px);
-  -webkit-backdrop-filter:blur(8px);
-
-  box-shadow:0 4px 12px rgba(0,0,0,0.25);
-
-  cursor:pointer;
-  transition:all .2s ease; 
+  font-size: 12px;
 }
 
-#custom-ar-btn:hover{
-  background:rgba(60,60,60,0.9);
-  transform:scale(1.05);
-}
 </style>
 </head>
+
 <body>
 
+<!-- ===== Control Panel ===== -->
 
 <div class="panel collapsed" id="controlPanel">
+
   <button class="toggle-btn" onclick="togglePanel()">☰</button>
 
   <div class="panel-content">
 
-    <strong>Wood Texture</strong>
-    <button class="action" onclick="setWood('wood-light.jpg')">Light Wood</button>
-    <button class="action" onclick="setWood('wood-dark.jpg')">Dark Wood</button>
-    <button class="action" onclick="setWood('wood-red.jpg')">Red Wood</button>
+    <div class="section-title">
+      Apple Metal
+    </div>
 
-    <strong>Tint</strong>
-    <button class="action" onclick="setTint(1,1,1)">Normal</button>
-    <button class="action" onclick="setTint(1,0.92,0.85)">Warm</button>
-    <button class="action" onclick="setTint(0.8,0.8,0.8)">Gray</button>
+    <button class="action" onclick="setAppleSilver()">
+      Apple Silver
+    </button>
 
-    <label>Brightness <span id="brightnessValue">0.80</span></label>
-    <input type="range" id="brightnessSlider" min="0.3" max="2" step="0.05" value="0.8">
+    <button class="action" onclick="setAppleSpaceGray()">
+      Space Gray
+    </button>
 
-    <label>Metallic <span id="metallicValue">0.00</span></label>
-    <input type="range" id="metallicSlider" min="0" max="1" step="0.01" value="0">
+    <button class="action" onclick="setAppleBlack()">
+      Black Titanium
+    </button>
 
-    <label>Roughness <span id="roughnessValue">0.25</span></label>
-    <input type="range" id="roughnessSlider" min="0" max="1" step="0.01" value="0.25">
+    <button class="action" onclick="setAppleGold()">
+      Apple Gold
+    </button>
+
+    <div class="section-title">
+      Wood Texture
+    </div>
+
+    <button class="action" onclick="setWood('wood-light.jpg')">
+      Light Wood
+    </button>
+
+    <button class="action" onclick="setWood('wood-dark.jpg')">
+      Dark Wood
+    </button>
+
+    <button class="action" onclick="setWood('wood-red.jpg')">
+      Red Wood
+    </button>
+
+    <div class="section-title">
+      Tint
+    </div>
+
+    <button class="action" onclick="setTint(1,1,1)">
+      Normal
+    </button>
+
+    <button class="action" onclick="setTint(0.85,0.88,0.95)">
+      Cool Silver
+    </button>
+
+    <button class="action" onclick="setTint(0.8,0.8,0.8)">
+      Gray
+    </button>
+
+    <label>
+      Brightness:
+      <span id="brightnessValue">0.72</span>
+    </label>
+
+    <input
+      type="range"
+      id="brightnessSlider"
+      min="0.3"
+      max="2"
+      step="0.01"
+      value="0.72">
+
+    <label>
+      Metallic:
+      <span id="metallicValue">1.00</span>
+    </label>
+
+    <input
+      type="range"
+      id="metallicSlider"
+      min="0"
+      max="1"
+      step="0.01"
+      value="1">
+
+    <label>
+      Roughness:
+      <span id="roughnessValue">0.18</span>
+    </label>
+
+    <input
+      type="range"
+      id="roughnessSlider"
+      min="0"
+      max="1"
+      step="0.01"
+      value="0.18">
 
   </div>
+
 </div>
+
+<!-- ===== Company Info ===== -->
+
+<div class="company-info">
+
+  <div class="title">
+    JoeSun Studio
+  </div>
+
+  <div>
+    Interactive 3D Viewer
+  </div>
+
+  <div class="sub">
+    Powered by model-viewer
+  </div>
+
+</div>
+
+<!-- ===== MODEL VIEWER ===== -->
 
 <model-viewer
-  id="mv"
-  src="Violin-v1.glb"
-  poster="poster.webp"
-  autoplay
 
-  ar
-  ar-modes="webxr scene-viewer quick-look"
-  ar-scale="fixed"
-  ar-placement="floor"
+  id="mv"
+
+  src="Violin-v1.glb"
+
+  poster="poster.webp"
 
   camera-controls
-  auto-rotate
-  rotation-per-second="15deg"
 
-/*  environment-image="https://modelviewer.dev/shared-assets/environments/spruit_sunrise_1k_HDR.hdr" */
-  environment-image="https://modelviewer.dev/shared-assets/environments/neutral.hdr"
+  auto-rotate
+
+  rotation-per-second="12deg"
+
+  autoplay
+
+  environment-image="neutral"
+
   tone-mapping="neutral"
-  exposure="0.8"
+
+  exposure="0.72"
+
   shadow-intensity="1"
-  shadow-softness="0.6"
+
+  shadow-softness="0.8"
+
   camera-orbit="auto auto auto"
+
   field-of-view="auto">
 
-  <button slot="ar-button" id="custom-ar-btn">
-    📱 AR 實境預覽
-  </button>
-  
-<div class="company-info">
- Joesun Studio<br>
-  0937-230075
-</div>
-  
 </model-viewer>
 
-<img src="logo.png" class="company-logo">
+<script type="module">
 
-<script>
 const mv = document.querySelector("#mv");
 
-/* 初始材質設定 */
+/* ===== panel ===== */
+
+window.togglePanel = function(){
+
+  document
+    .querySelector("#controlPanel")
+    .classList
+    .toggle("collapsed");
+};
+
+/* ===== initial apple silver ===== */
+
 mv.addEventListener("load", () => {
-  mv.model.materials.forEach(mat => {
-    mat.pbrMetallicRoughness.setBaseColorFactor([0.82,0.82,0.84,1])
-  });
+
+  setAppleSilver();
+
 });
 
-/* Panel Toggle */
-function togglePanel() {
-  document.querySelector("#controlPanel").classList.toggle("collapsed");
-}
+/* ===== textures ===== */
 
-/* Texture Switch */
-async function setWood(textureUrl) {
+window.setWood = async function(textureUrl){
+
   const tex = await mv.createTexture(textureUrl);
 
   mv.model.materials.forEach(mat => {
-    if (mat.pbrMetallicRoughness.baseColorTexture) {
-      mat.pbrMetallicRoughness.baseColorTexture.setTexture(tex);
+
+    if(mat.pbrMetallicRoughness.baseColorTexture){
+
+      mat
+        .pbrMetallicRoughness
+        .baseColorTexture
+        .setTexture(tex);
     }
   });
-}
-
-/* Tint */
-function setTint(r,g,b) {
-  mv.model.materials.forEach(mat => {
-    mat.pbrMetallicRoughness.setBaseColorFactor([r,g,b,1]);
-  });
-}
-
-/* Utility */
-function updateAllMaterials(callback){
-  mv.model.materials.forEach(mat => callback(mat.pbrMetallicRoughness));
-}
-
-/* Sliders */
-brightnessSlider.addEventListener("input", e => {
-  mv.exposure = e.target.value;
-  brightnessValue.textContent = Number(e.target.value).toFixed(2);
-});
-
-metallicSlider.addEventListener("input", e => {
-  const val = Number(e.target.value);
-  updateAllMaterials(pbr => pbr.setMetallicFactor(val));
-  metallicValue.textContent = val.toFixed(2);
-});
-
-roughnessSlider.addEventListener("input", e => {
-  const val = Number(e.target.value);
-  updateAllMaterials(pbr => pbr.setRoughnessFactor(val));
-  roughnessValue.textContent = val.toFixed(2);
-});
-
-/* more */
-window.setAppleSilver = function(){
-
-  mv.exposure = 0.82;
-
-  mv.model.materials.forEach(mat => {
-
-    const pbr = mat.pbrMetallicRoughness;
-
-    // Apple Silver
-    pbr.setBaseColorFactor([0.72,0.74,0.78,1]);
-
-    // 金屬感
-    pbr.setMetallicFactor(0.92);
-
-    // 柔和鋁金屬
-    pbr.setRoughnessFactor(0.22);
-
-  });
-
 };
 
-window.setAppleSpaceGray = function(){
+/* ===== tint ===== */
+
+window.setTint = function(r,g,b){
+
+  mv.model.materials.forEach(mat => {
+
+    mat
+      .pbrMetallicRoughness
+      .setBaseColorFactor([r,g,b,1]);
+
+  });
+};
+
+/* ===== apple presets ===== */
+
+window.setAppleSilver = function(){
 
   mv.exposure = 0.72;
 
@@ -294,45 +424,68 @@ window.setAppleSpaceGray = function(){
 
     const pbr = mat.pbrMetallicRoughness;
 
-    pbr.setBaseColorFactor([0.32,0.33,0.36,1]);
-    pbr.setMetallicFactor(0.88);
-    pbr.setRoughnessFactor(0.28);
+    pbr.setBaseColorFactor([0.72,0.74,0.78,1]);
 
-  });
+    pbr.setMetallicFactor(1.0);
 
-};
-
-window.setAppleBlack = function(){
-
-  mv.exposure = 0.68;
-
-  mv.model.materials.forEach(mat => {
-
-    const pbr = mat.pbrMetallicRoughness;
-
-    pbr.setBaseColorFactor([0.12,0.12,0.13,1]);
-    pbr.setMetallicFactor(0.95);
     pbr.setRoughnessFactor(0.18);
 
   });
 
+  brightnessSlider.value = 0.72;
+  metallicSlider.value = 1.0;
+  roughnessSlider.value = 0.18;
+
+  brightnessValue.textContent = "0.72";
+  metallicValue.textContent = "1.00";
+  roughnessValue.textContent = "0.18";
 };
 
-window.setAppleGold = function(){
+/* ===== sliders ===== */
 
-  mv.exposure = 0.86;
+function updateAllMaterials(callback){
 
   mv.model.materials.forEach(mat => {
 
-    const pbr = mat.pbrMetallicRoughness;
+    callback(mat.pbrMetallicRoughness);
 
-    pbr.setBaseColorFactor([0.83,0.72,0.52,1]);
-    pbr.setMetallicFactor(0.88);
-    pbr.setRoughnessFactor(0.24);
+  });
+}
+
+brightnessSlider.addEventListener("input", e => {
+
+  mv.exposure = e.target.value;
+
+  brightnessValue.textContent =
+    Number(e.target.value).toFixed(2);
+});
+
+metallicSlider.addEventListener("input", e => {
+
+  const val = Number(e.target.value);
+
+  updateAllMaterials(pbr => {
+
+    pbr.setMetallicFactor(val);
 
   });
 
-};
+  metallicValue.textContent = val.toFixed(2);
+});
+
+roughnessSlider.addEventListener("input", e => {
+
+  const val = Number(e.target.value);
+
+  updateAllMaterials(pbr => {
+
+    pbr.setRoughnessFactor(val);
+
+  });
+
+  roughnessValue.textContent = val.toFixed(2);
+});
+
 </script>
 
 </body>
