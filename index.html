@@ -51,7 +51,7 @@ async function setWood(textureUrl){
 function startTeslaShowroom(){
  let t=0;
  function animate(){
-  t+=0.005;
+  t+=0.5;
   const orbit=180+Math.sin(t)*15;
   const zoom=95+Math.sin(t*0.5)*8;
   mv.cameraOrbit=`${orbit}deg 75deg ${zoom}%`;
