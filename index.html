@@ -26,11 +26,33 @@ model-viewer{width:100vw;height:100vh;background:#f5f5f5}
 <button onclick="setWood('wood-red.jpg')">White Wood</button>
 </div></div>
 
-<model-viewer id="mv" src="Violin-v1.glb" poster="poster.webp"
-ar ar-modes="webxr scene-viewer quick-look"
-camera-controls autoplay
-environment-image="industrial_workshop_foundry_4k.hdr"
-exposure="1.35">
+
+<model-viewer id="mv" 
+  id="mv"
+  src="Violin-v1.glb"
+  poster="poster.webp"
+
+  ar
+  ar-modes="webxr scene-viewer quick-look"
+
+  camera-controls
+
+  touch-action="pan-y"
+
+  disable-pan="false"
+
+  autoplay
+
+  environment-image="https://modelviewer.dev/shared-assets/environments/spruit_sunrise_1k_HDR.hdr"
+
+  tone-mapping="aces"
+
+  exposure="1.35"
+
+  shadow-intensity="0.55"
+  shadow-softness="0.9">
+
+
 <button slot="ar-button">📱 AR 實境預覽</button>
 </model-viewer>
 
@@ -38,35 +60,44 @@ exposure="1.35">
 <img src="logo.png" class="company-logo">
 
 <script>
-const mv=document.querySelector("#mv");
-function togglePanel(){document.querySelector("#controlPanel").classList.toggle("collapsed");}
-async function setWood(textureUrl){
- const tex=await mv.createTexture(textureUrl);
- mv.model.materials.forEach(mat=>{
-  if(mat.pbrMetallicRoughness.baseColorTexture){
-   mat.pbrMetallicRoughness.baseColorTexture.setTexture(tex);
-  }
- });
-}
-function startTeslaShowroom(){
- let t=0;
- function animate(){
-  t+=0.5;
-  const orbit=180+Math.sin(t)*15;
-  const zoom=95+Math.sin(t*0.5)*8;
-  mv.cameraOrbit=`${orbit}deg 75deg ${zoom}%`;
-  requestAnimationFrame(animate);
- }
- animate();
-}
-mv.addEventListener("load",()=>{
- mv.model.materials.forEach(mat=>{
-  const p=mat.pbrMetallicRoughness;
-  p.setBaseColorFactor([0.42,0.43,0.46,1]);
-  p.setMetallicFactor(0.82);
-  p.setRoughnessFactor(0.24);
- });
- startTeslaShowroom();
+ let userInteracting = false;
+
+/* 使用者開始拖曳 */
+mv.addEventListener("pointerdown", () => {
+  userInteracting = true;
 });
+
+/* 放開後 5 秒恢復展示模式 */
+mv.addEventListener("pointerup", () => {
+  setTimeout(() => {
+    userInteracting = false;
+  }, 5000);
+});
+
+function startTeslaShowroom(){
+
+  let t = 0;
+
+  function animate(){
+
+    if(!userInteracting){
+
+      t += 0.005;
+
+      const orbit =
+        180 + Math.sin(t) * 15;
+
+      const zoom =
+        95 + Math.sin(t * 0.5) * 8;
+
+      mv.cameraOrbit =
+        `${orbit}deg 75deg ${zoom}%`;
+    }
+
+    requestAnimationFrame(animate);
+  }
+
+  animate();
+}
 </script>
 </body></html>
